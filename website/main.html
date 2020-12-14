@@ -1,0 +1,57 @@
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js"
+    type="text/javascript"
+></script>
+<!-- <script src="js/vue.js"></script> -->
+
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+<meta content="utf-8" http-equiv="encoding" />
+
+<script type="module">
+    // import Paho from "./paho-mqtt.js";
+
+    var client = new Paho.MQTT.Client("broker.hivemq.com", 8000, "browser");
+
+    var localReading;
+    var localStatus;
+    var localNormalized;
+
+    client.onConnectionLost = function (responseObject) {
+        if (responseObject.errorCode !== 0) {
+            console.log("Kehilangan koneksi :" + responseObject.errorMessage);
+        }
+    };
+
+    client.onMessageArrived = function (message) {
+        console.log(message.payloadString);
+    };
+
+    client.connect({
+        onSuccess: function () {
+            console.log("Berhasil terknokesi ke server!");
+            client.subscribe("fp_mikrokontroller/sensorReading");
+            client.subscribe("fp_mikrokontroller/sensorStatus");
+            client.subscribe("fp_mikrokontroller/sensorNormalized");
+        },
+    });
+
+    // client.on("message", function (topic, message) {
+    //     switch (topic) {
+    //         case "fp_mikrokontroller/sensorReading": {
+    //             console.log(`${topic}: ${message}`);
+    //             break;
+    //         }
+    //         case "fp_mikrokontroller/sensorStatus": {
+    //             console.log(`${topic}: ${message}`);
+    //             break;
+    //         }
+    //         case "fp_mikrokontroller/sensorNormalized": {
+    //             console.log(`${topic}: ${message}`);
+    //             break;
+    //         }
+    //         default: {
+    //             break;
+    //         }
+    //     }
+    // });
+</script>
